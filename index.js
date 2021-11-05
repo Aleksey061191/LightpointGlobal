@@ -296,20 +296,12 @@ addShopeButton.addEventListener('click', openAddShope);
 
 // Создадим форму редактировать магазин
 
-let num = 0;
-const setContentChangeShope = (e) => {
-    const id = setInput('порядковый номер');
-    modalContent.innerHTML = '';
-    modalContent.append(id);
-    id.querySelector('.text').addEventListener('change', setChangeShope);
-}
-
 const setChangeShope = (e) => {
     e.preventDefault()
     const id = document.querySelector('.text').value;
     num = id;
     shops.forEach(e => {
-        if (e.order === +id) {
+        if (e.order === num) {
             const form = document.createElement('form');
             const shopeName = setInput(e.name, e);
             const shopeAddress = setInput(e.address, e);
@@ -327,6 +319,16 @@ const setChangeShope = (e) => {
     
 }
 
+let num = 0;
+const setContentChangeShope = (e) => {
+    const id = setInput('порядковый номер');
+    modalContent.innerHTML = '';
+    modalContent.append(id);
+    id.querySelector('.text').addEventListener('change', setChangeShope);
+}
+
+
+
 
 const openChangeShope = () => {
     setContentChangeShope();
@@ -340,7 +342,7 @@ const changeShope = (e) => {
     const inp = document.querySelectorAll('.text');
     if (inp[0].value !== '' && inp[1].value !== '' && inp[2].value !== ''){
         shops.forEach(e => {
-            if (e.order === +num) {
+            if (e.order === num) {
                 e.name = inp[0].value;
                 e.address = inp[1].value;
                 e.workingHours = inp[2].value;
@@ -348,7 +350,6 @@ const changeShope = (e) => {
                 document.querySelectorAll('.address')[num - 1].textContent = `Адрес: ${e.address}`;
                 document.querySelectorAll('.timework')[num - 1].textContent = `Режим работы: ${e.workingHours}`;
                 document.querySelector('.overlay').remove();
-                console.log(shops)
             }
         })
     } else {
