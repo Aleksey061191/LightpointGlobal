@@ -139,11 +139,17 @@ navbar.addEventListener(`dragover`, (e) => {
 const changeOrder = () => {
     const items = document.querySelectorAll('.navbar-item');
     const orders = document.querySelectorAll('.order');
+    const id = document.querySelectorAll('.button-list-items');
     for (let i = 0; i < items.length; i++) {
-        if (items[i].order !== i+1) {
+        if (id[i].id !== i+1) {
             items[i].order = i+1;
+            shops[id[i].id - 1].order = i + 1;
             orders[i].textContent =`${items[i].order}. `;
         } 
+        
+    }
+    for (let i = 0; i < items.length; i++) {
+        shops[id[i].id - 1].order = i + 1;
     }
 }
 
@@ -292,33 +298,34 @@ addShopeButton.addEventListener('click', openAddShope);
 
 let num = 0;
 const setContentChangeShope = (e) => {
-    const form = document.createElement('form');
     const id = setInput('порядковый номер');
-    form.append(id);
     modalContent.innerHTML = '';
-    modalContent.append(form);
-    const setChangeShope = () => {
-        num = id.querySelector('.text').value;
-        shops.forEach(e => {
-            if (e.order === id.querySelector('.text').value) {
-                const shopeName = setInput(e.name, e);
-                const shopeAddress = setInput(e.address, e);
-                const shopeTimeWork = setInput(e.workingHours, e);
-                const changeButton = document.createElement('button');
-                changeButton.classList.add('add-button', 'change-button');
-                changeButton.textContent = 'Изменить';
-                modalContent.innerHTML = '';
-                form.innerHTML = '';
-                form.append(shopeName, shopeAddress, shopeTimeWork, changeButton);
-                modalContent.append(form);
-                changeButton.addEventListener('click', changeShope);
-            }
-        })
-        
-    }
+    modalContent.append(id);
     id.querySelector('.text').addEventListener('change', setChangeShope);
 }
 
+const setChangeShope = (e) => {
+    e.preventDefault()
+    const id = document.querySelector('.text').value;
+    num = id;
+    shops.forEach(e => {
+        if (e.order === +id) {
+            const form = document.createElement('form');
+            const shopeName = setInput(e.name, e);
+            const shopeAddress = setInput(e.address, e);
+            const shopeTimeWork = setInput(e.workingHours, e);
+            const changeButton = document.createElement('button');
+            changeButton.classList.add('add-button', 'change-button');
+            changeButton.textContent = 'Изменить';
+            modalContent.innerHTML = '';
+            form.innerHTML = '';
+            form.append(shopeName, shopeAddress, shopeTimeWork, changeButton);
+            modalContent.append(form);
+            changeButton.addEventListener('click', changeShope);
+        }
+    })
+    
+}
 
 
 const openChangeShope = () => {
@@ -330,16 +337,20 @@ const openChangeShope = () => {
 
 const changeShope = (e) => {
     e.preventDefault();
-
     const inp = document.querySelectorAll('.text');
     if (inp[0].value !== '' && inp[1].value !== '' && inp[2].value !== ''){
-        shops[num].name = inp[0].value;
-        shops[num].address = inp[1].value;
-        shops[num].workingHours = inp[2].value;
-        document.querySelectorAll('.shope-name')[num - 1].textContent = shops[num].name;
-        document.querySelectorAll('.address')[num - 1].textContent = `Адрес: ${shops[num].address}`;
-        document.querySelectorAll('.timework')[num - 1].textContent = `Режим работы: ${shops[num].workingHours}`;
-        document.querySelector('.overlay').remove();
+        shops.forEach(e => {
+            if (e.order === +num) {
+                e.name = inp[0].value;
+                e.address = inp[1].value;
+                e.workingHours = inp[2].value;
+                document.querySelectorAll('.shope-name')[num - 1].textContent = e.name;
+                document.querySelectorAll('.address')[num - 1].textContent = `Адрес: ${e.address}`;
+                document.querySelectorAll('.timework')[num - 1].textContent = `Режим работы: ${e.workingHours}`;
+                document.querySelector('.overlay').remove();
+                console.log(shops)
+            }
+        })
     } else {
         const err = document.createElement('span');
         err.classList.add('error');
